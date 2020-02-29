@@ -1,2 +1,0 @@
-Dia1:	05Diseño de la Base de Datos
-Dia2:	11Configuracion inicial del proyecto y Creando el modelo de datos
