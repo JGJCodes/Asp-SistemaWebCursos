@@ -20,9 +20,24 @@ namespace SistemaWebCursos.Controllers
         }
 
         // GET: Categorias
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string sortOrden)
         {
-            return View(await _context.Categoria.ToListAsync());
+            // GET: Categorias por orden ascendente o desendente
+            ViewData["NombreSortParm"] = String.IsNullOrEmpty(sortOrden) ? "nombre_desc" : "";
+            ViewData["DescripcionSortParm"] = sortOrden == "descripcion_asc" ? "descripcion_desc" : "descripcion_asc";
+
+            var categorias = from s in _context.Categoria select s;
+
+            switch (sortOrden)
+            {
+                case "nombre_desc": categorias = categorias.OrderByDescending(s => s.Nombre); break;
+                case "descripcion_desc": categorias = categorias.OrderByDescending(s => s.Descripcion); break;
+                case "descripcion_asc": categorias = categorias.OrderByDescending(s => s.Descripcion); break;
+                default: categorias = categorias.OrderByDescending(s => s.Nombre); break;
+            }
+
+            return View(await categorias.AsNoTracking().ToListAsync());
+            //return View(await _context.Categoria.ToListAsync());
         }
 
         // GET: Categorias/Details/5

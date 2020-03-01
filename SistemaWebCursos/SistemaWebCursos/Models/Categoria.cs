@@ -34,13 +34,5 @@ namespace SistemaWebCursos.Models
 
         //True = Activo, False = Inactivo
         public Boolean Estado { get; set; }
-
-        /**
-        public Categoria(string p1, string p2, Boolean p3)
-        {
-            this.Nombre = p1;
-            this.Descripcion = p2;
-            this.Estado = p3;
-        }**/
     }
 }
