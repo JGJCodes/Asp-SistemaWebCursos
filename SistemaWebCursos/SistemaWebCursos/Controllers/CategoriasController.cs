@@ -20,24 +20,53 @@ namespace SistemaWebCursos.Controllers
         }
 
         // GET: Categorias
-        public async Task<IActionResult> Index(string sortOrden)
+        public async Task<IActionResult> Index(string sortOrden, string searchString)
         {
-            // GET: Categorias por orden ascendente o desendente
-            ViewData["NombreSortParm"] = String.IsNullOrEmpty(sortOrden) ? "nombre_desc" : "";
-            ViewData["DescripcionSortParm"] = sortOrden == "descripcion_asc" ? "descripcion_desc" : "descripcion_asc";
+            Task<IActionResult> context;
 
+            if (!String.IsNullOrEmpty(searchString)) //Analiza si se esta realizando una busqueda de datos
+            {
+                context = CategoriasByOrder(sortOrden);
+            }
+
+            context = CategoriasByOrder(sortOrden);
+
+            return View(await context);
+            //return View(await _context.Categoria.ToListAsync());
+        }
+
+        // GET: Busqueda de registros de Categorias
+        public async Task<IActionResult> CategoriasSearch(string searchString)
+        {
+            //Filtro de busqueda
+            ViewData["CurrentFilter"] = searchString;
+            //Obtiene los datos de la tabla Categoria
             var categorias = from s in _context.Categoria select s;
 
-            switch (sortOrden)
+            categorias = categorias.Where(s => s.Nombre.Contains(searchString)|| s.Descripcion.Contains(searchString));
+
+            return View(await categorias.AsNoTracking().ToListAsync());
+        }
+
+        // GET: Categorias por orden ascendente o desendente
+        public async Task<IActionResult> CategoriasByOrder(string sortOrden)
+        {
+            //Ordenar por nombre
+            ViewData["NombreSortParm"] = String.IsNullOrEmpty(sortOrden) ? "nombre_desc" : "";
+            //Ordenar por descripcion
+            ViewData["DescripcionSortParm"] = sortOrden == "descripcion_asc" ? "descripcion_desc" : "descripcion_asc";
+            //Obtiene los datos de la tabla Categoria
+            var categorias = from s in _context.Categoria select s;
+
+            switch (sortOrden) //Analisa los diferentes tipos de ordenamiento de filas
             {
                 case "nombre_desc": categorias = categorias.OrderByDescending(s => s.Nombre); break;
                 case "descripcion_desc": categorias = categorias.OrderByDescending(s => s.Descripcion); break;
-                case "descripcion_asc": categorias = categorias.OrderByDescending(s => s.Descripcion); break;
-                default: categorias = categorias.OrderByDescending(s => s.Nombre); break;
+                case "descripcion_asc": categorias = categorias.OrderBy(s => s.Descripcion); break;
+                default: categorias = categorias.OrderBy(s => s.Nombre); break;
             }
 
             return View(await categorias.AsNoTracking().ToListAsync());
-            //return View(await _context.Categoria.ToListAsync());
         }
 
         // GET: Categorias/Details/5
@@ -100,7 +129,7 @@ namespace SistemaWebCursos.Controllers
         /** POST: Categorias/Edit/5, Metodos que realizan la edicion de un registro de categoria
         * To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         * more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        **/    
+        **/
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("CategoriaID,Nombre,Descripcion,Estado")] Categoria categoria)
