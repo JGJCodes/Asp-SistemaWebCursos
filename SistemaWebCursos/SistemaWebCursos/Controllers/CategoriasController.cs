@@ -20,43 +20,32 @@ namespace SistemaWebCursos.Controllers
         }
 
         // GET: Categorias
-        public async Task<IActionResult> Index(string sortOrden, string searchString)
-        {
-            Task<IActionResult> context;
-
-            if (!String.IsNullOrEmpty(searchString)) //Analiza si se esta realizando una busqueda de datos
-            {
-                context = CategoriasByOrder(sortOrden);
-            }
-
-            context = CategoriasByOrder(sortOrden);
-
-            return View(await context);
-            //return View(await _context.Categoria.ToListAsync());
-        }
-
-        // GET: Busqueda de registros de Categorias
-        public async Task<IActionResult> CategoriasSearch(string searchString)
-        {
-            //Filtro de busqueda
-            ViewData["CurrentFilter"] = searchString;
-            //Obtiene los datos de la tabla Categoria
-            var categorias = from s in _context.Categoria select s;
-
-            categorias = categorias.Where(s => s.Nombre.Contains(searchString)|| s.Descripcion.Contains(searchString));
-
-            return View(await categorias.AsNoTracking().ToListAsync());
-        }
-
-        // GET: Categorias por orden ascendente o desendente
-        public async Task<IActionResult> CategoriasByOrder(string sortOrden)
+        public async Task<IActionResult> Index(string sortOrden, string searchString, string currentFilter, int? page)
         {
             //Ordenar por nombre
             ViewData["NombreSortParm"] = String.IsNullOrEmpty(sortOrden) ? "nombre_desc" : "";
             //Ordenar por descripcion
             ViewData["DescripcionSortParm"] = sortOrden == "descripcion_asc" ? "descripcion_desc" : "descripcion_asc";
+
+            //Verifica si existe algun filtro u ordenacion en la pagina
+            if (searchString != null) { 
+                page = 1;
+            } else { 
+                searchString = currentFilter; 
+            }
+
+            //Filtro de busqueda
+            ViewData["CurrentFilter"] = searchString;
+            //Filtro de ordenacion
+            ViewData["CurrentSort"] = sortOrden;
+
             //Obtiene los datos de la tabla Categoria
             var categorias = from s in _context.Categoria select s;
+
+            if (!String.IsNullOrEmpty(searchString)) //Analiza si se esta realizando una busqueda de datos
+            {
+                categorias = categorias.Where(s => s.Nombre.Contains(searchString) || s.Descripcion.Contains(searchString));
+            }
 
             switch (sortOrden) //Analisa los diferentes tipos de ordenamiento de filas
             {
@@ -66,7 +55,11 @@ namespace SistemaWebCursos.Controllers
                 default: categorias = categorias.OrderBy(s => s.Nombre); break;
             }
 
-            return View(await categorias.AsNoTracking().ToListAsync());
+            //return View(await categorias.AsNoTracking().ToListAsync());
+            //return View(await _context.Categoria.ToListAsync());
+            
+            int pageSize = 3;//tamaño total de paginas de division de datos
+            return View(await Paginacion<Categoria>.CreateAsync(categorias.AsNoTracking(), page ?? 1, pageSize));
         }
 
         // GET: Categorias/Details/5
