@@ -34,5 +34,9 @@ namespace SistemaWebCursos.Models
 
         //True = Activo, False = Inactivo
         public Boolean Estado { get; set; }
+
+        //Indica que la clase Categoria se relaciona con la clase Curso
+        public ICollection<Curso> Cursos { get; set; }
+
     }
 }

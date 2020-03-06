@@ -15,5 +15,7 @@ namespace SistemaWebCursos.Data
         }
 
         public DbSet<SistemaWebCursos.Models.Categoria> Categoria { get; set; }
+
+        public DbSet<SistemaWebCursos.Models.Curso> Curso { get; set; }
     }
 }
