@@ -52,6 +52,8 @@ namespace SistemaWebCursos.Controllers
                 case "nombre_desc": categorias = categorias.OrderByDescending(s => s.Nombre); break;
                 case "descripcion_desc": categorias = categorias.OrderByDescending(s => s.Descripcion); break;
                 case "descripcion_asc": categorias = categorias.OrderBy(s => s.Descripcion); break;
+                case "estado_asc": categorias = categorias.OrderBy(s => s.Estado); break;
+                case "estado_desc": categorias = categorias.OrderByDescending(s => s.Estado); break;
                 default: categorias = categorias.OrderBy(s => s.Nombre); break;
             }
 

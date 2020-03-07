@@ -14,7 +14,7 @@
             <input type="submit" value="Buscar" class="btn btn-outline-success mb-2" />
             <a asp-action="Index" class="btn btn-outline-primary mb-2">Todos los registros</a>
             <a asp-action="Create" class="btn btn-outline-secondary mb-2">Nuevo registro</a>
-            <label class="form-control-plaintext mb-2">| Registros mostrados @Model.TotalR </label>
+           
         </div>
     </div>
 </form>
@@ -35,7 +35,11 @@
                 </a>
             </th>
             <th>
-                Estado<!-- aHtml.DisplayNameFor(model => model.Estado)-->
+                <a asp-action="Index" asp-route-sortOrden="@ViewData["EstadoSortParm"]"
+                   asp-route-currentFilter="@ViewData["CurrentFilter"]">
+                    Estado<!-- aHtml.DisplayNameFor(model => model.Estado)-->
+                </a>
+                
             </th>
             <th></th>
         </tr>

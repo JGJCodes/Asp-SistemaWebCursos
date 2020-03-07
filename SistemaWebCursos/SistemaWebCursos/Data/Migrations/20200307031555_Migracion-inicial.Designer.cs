@@ -9,7 +9,7 @@ using SistemaWebCursos.Data;
 namespace SistemaWebCursos.Migrations
 {
     [DbContext(typeof(SistemaWebCursosContext))]
-    [Migration("20200306021912_[Migracion-inicial]")]
+    [Migration("20200307031555_Migracion-inicial")]
     partial class Migracioninicial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
